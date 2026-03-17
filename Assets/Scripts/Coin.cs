@@ -24,6 +24,7 @@ public class Coin : MonoBehaviour
     private int         originalSortingOrder;
     private SpriteRenderer sr;
     private bool        collisionIgnored = false;
+    private GameObject  detectionColliderGo;
 
     void Start()
     {
@@ -45,7 +46,7 @@ public class Coin : MonoBehaviour
         if (target == null) return;
 
         if (beingPulled && !collisionIgnored) { IgnorePlayerCollision(true); collisionIgnored = true; }
-        else if (!beingPulled && collisionIgnored) { IgnorePlayerCollision(false); collisionIgnored = false; }
+        else if (!beingPulled && !anchored && collisionIgnored) { IgnorePlayerCollision(false); collisionIgnored = false; }
 
         if (beingPulled && !unanchoring)
         {
@@ -95,6 +96,10 @@ public class Coin : MonoBehaviour
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         if (rb != null) { rb.linearVelocity = Vector2.zero; rb.bodyType = RigidbodyType2D.Static; }
 
+        // Ignorar colision con jugador mientras está anclada
+        IgnorePlayerCollision(true);
+        collisionIgnored = true;
+
         EmbedVisual();
     }
 
@@ -103,8 +108,6 @@ public class Coin : MonoBehaviour
         Vector2 embedDir = -impactNormal;
         float spriteHeight = sr != null ? sr.bounds.size.y : 0.1f;
         transform.position += (Vector3)(embedDir * spriteHeight * embedFraction);
-
-        // Poner detrás de la superficie
         if (sr != null) sr.sortingOrder = embeddedSortingOrder;
     }
 
@@ -113,7 +116,6 @@ public class Coin : MonoBehaviour
         if (!anchored) return;
         anchored = false; unanchoring = true;
 
-        // Restaurar sorting order
         if (sr != null) sr.sortingOrder = originalSortingOrder;
 
         MetalObject metal = GetComponent<MetalObject>();

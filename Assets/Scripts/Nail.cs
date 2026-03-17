@@ -102,12 +102,37 @@ public class Nail : MonoBehaviour
         }
     }
 
+    private GameObject detectionColliderGo;
+
     void Embed()
     {
         embedded = true;
         MetalObject metal = GetComponent<MetalObject>();
         if (metal != null) metal.anchoredMass = 9999f;
         if (rb != null) { rb.linearVelocity = Vector2.zero; rb.bodyType = RigidbodyType2D.Static; }
+
+        // Desactivar collider fisico
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        // Crear collider trigger solo para deteccion alomantica
+        if (detectionColliderGo == null)
+        {
+            detectionColliderGo = new GameObject("AllomancyDetector");
+            detectionColliderGo.transform.SetParent(transform);
+            detectionColliderGo.transform.localPosition = Vector3.zero;
+            detectionColliderGo.layer = gameObject.layer;
+
+            CircleCollider2D trigger = detectionColliderGo.AddComponent<CircleCollider2D>();
+            trigger.isTrigger = true;
+            trigger.radius    = 0.1f;
+
+            // Copiar MetalObject para que sea detectable
+            MetalObject mo = detectionColliderGo.AddComponent<MetalObject>();
+            mo.metalMass    = metal != null ? metal.metalMass : 0.5f;
+            mo.anchoredMass = 9999f;
+        }
+
         EmbedVisual();
     }
 
@@ -157,6 +182,18 @@ public class Nail : MonoBehaviour
         if (!embedded) return;
         embedded = false; unanchoring = true;
         RemoveEmbedMask();
+
+        // Reactivar collider fisico
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = true;
+
+        // Destruir collider de deteccion
+        if (detectionColliderGo != null)
+        {
+            Destroy(detectionColliderGo);
+            detectionColliderGo = null;
+        }
+
         MetalObject metal = GetComponent<MetalObject>();
         if (metal != null) metal.anchoredMass = 0f;
         if (rb != null) rb.bodyType = RigidbodyType2D.Dynamic;
