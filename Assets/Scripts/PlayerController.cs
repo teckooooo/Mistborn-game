@@ -7,6 +7,11 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 14f;
     public float maxSpeed  = 20f;
 
+    [Header("Dash")]
+    public float dashForce    = 20f;
+    public float dashDuration = 0.2f;
+    public float dashCooldown = 1f;
+
     [Header("Coin Throw")]
     public GameObject coinPrefab;
     public Transform  coinSpawn;
@@ -16,10 +21,15 @@ public class PlayerController : MonoBehaviour
     private MetalReserve   reserve;
     private bool           isGrounded;
     private SpriteRenderer sr;
-    private bool           facingRight = true;
+    private bool           facingRight  = true;
     private GameObject     currentGround;
 
+    private bool  isDashing         = false;
+    private float dashTimer         = 0f;
+    private float dashCooldownTimer = 0f;
+
     public bool IsGrounded => isGrounded;
+    public bool IsDashing  => isDashing;
 
     void Start()
     {
@@ -30,10 +40,62 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Move();
+        Dash();
+        if (!isDashing) Move();
         Jump();
         ThrowCoin();
         ClampSpeed();
+
+        if (dashCooldownTimer > 0) dashCooldownTimer -= Time.deltaTime;
+        if (dashTimer > 0)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0) isDashing = false;
+        }
+    }
+
+    void Dash()
+    {
+        if (dashCooldownTimer > 0) return;
+        if (isDashing) return;
+
+        bool shiftDown = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
+        bool shiftHeld = Input.GetKey(KeyCode.LeftShift)     || Input.GetKey(KeyCode.RightShift);
+
+        bool leftDown  = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
+        bool rightDown = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
+        bool leftHeld  = Input.GetKey(KeyCode.A)     || Input.GetKey(KeyCode.LeftArrow);
+        bool rightHeld = Input.GetKey(KeyCode.D)     || Input.GetKey(KeyCode.RightArrow);
+
+        float dashDir = 0f;
+
+        if (shiftDown)
+        {
+            if (rightHeld)     dashDir =  1f;
+            else if (leftHeld) dashDir = -1f;
+        }
+        else if (shiftHeld)
+        {
+            if (rightDown)     dashDir =  1f;
+            else if (leftDown) dashDir = -1f;
+        }
+
+        if (dashDir == 0f) return;
+
+        isDashing         = true;
+        dashTimer         = dashDuration;
+        dashCooldownTimer = dashCooldown;
+
+        Flip(dashDir > 0);
+        rb.linearVelocity = new Vector2(dashDir * dashForce, rb.linearVelocity.y);
+
+        // Disparar animacion inmediatamente
+        Animator anim = GetComponent<Animator>();
+        if (anim != null)
+        {
+            if (isGrounded) anim.SetTrigger("Dash");
+            else            anim.SetTrigger("AirDash");
+        }
     }
 
     void Move()
@@ -44,8 +106,8 @@ public class PlayerController : MonoBehaviour
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         bool mouseIsRight  = mouseWorld.x > transform.position.x;
 
-        if (move > 0)                        Flip(true);
-        else if (move < 0)                   Flip(false);
+        if (move > 0)                         Flip(true);
+        else if (move < 0)                    Flip(false);
         else if (mouseIsRight && !facingRight) Flip(true);
         else if (!mouseIsRight && facingRight) Flip(false);
     }
@@ -89,7 +151,7 @@ public class PlayerController : MonoBehaviour
 
     void ClampSpeed()
     {
-        if (rb.linearVelocity.magnitude > maxSpeed)
+        if (!isDashing && rb.linearVelocity.magnitude > maxSpeed)
             rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
     }
 
@@ -107,7 +169,7 @@ public class PlayerController : MonoBehaviour
             {
                 isGrounded    = true;
                 currentGround = collision.gameObject;
-                Debug.Log($"[PlayerController] Parado sobre: {collision.gameObject.name} (Tag: {collision.gameObject.tag})");
+                Debug.Log($"[PlayerController] Parado sobre: {collision.gameObject.name} (Tag: {tag})");
                 break;
             }
         }

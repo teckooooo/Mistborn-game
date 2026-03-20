@@ -348,6 +348,9 @@ MonoBehaviour:
   moveSpeed: 8
   jumpForce: 12
   maxSpeed: 20
+  dashForce: 20
+  dashDuration: 0.2
+  dashCooldown: 0.2
   coinPrefab: {fileID: 6562062035694803408, guid: ede87799d5080b54fb12b643897c9361, type: 3}
   coinSpawn: {fileID: 1315670814}
   coinThrowForce: 20

@@ -26,9 +26,9 @@ public class PlayerAnimator : MonoBehaviour
         float velocityY = rb.linearVelocity.y;
         bool  grounded  = pc.IsGrounded;
 
-        anim.SetFloat(ParamSpeed,      speedX);
-        anim.SetBool(ParamIsGrounded,  grounded);
-        anim.SetBool(ParamIsJumping,   !grounded && velocityY > 0.1f);
-        anim.SetBool(ParamIsFalling, !grounded && velocityY < -0.5f);
+        anim.SetFloat(ParamSpeed,     speedX);
+        anim.SetBool(ParamIsGrounded, grounded);
+        anim.SetBool(ParamIsJumping,  !grounded && velocityY > 0.1f);
+        anim.SetBool(ParamIsFalling,  !grounded && velocityY < -0.5f);
     }
 }
