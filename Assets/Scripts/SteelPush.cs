@@ -35,6 +35,26 @@ public class SteelPush : MonoBehaviour
             Rigidbody2D metalRb       = metal.GetComponent<Rigidbody2D>();
             bool        metalIsStatic = metalRb == null || metalRb.bodyType == RigidbodyType2D.Static;
 
+            // Si es una moneda anclada al suelo, desanclarla solo si el push
+            // es mayormente horizontal — si es hacia abajo, el jugador quiere
+            // usarla como ancla para elevarse
+            Coin coin = metal.GetComponent<Coin>();
+            if (coin != null && metal.anchoredMass >= 9999f)
+            {
+                Vector2 pushDir = ((Vector2)metal.transform.position - (Vector2)transform.position).normalized;
+                bool pushingDown = pushDir.y < -0.5f;
+
+                if (!pushingDown)
+                {
+                    coin.Unanchor();
+                    if (metalRb != null)
+                    {
+                        metalRb.bodyType = RigidbodyType2D.Dynamic;
+                        metalIsStatic    = false;
+                    }
+                }
+            }
+
             Vector2 dir           = ((Vector2)metal.transform.position - (Vector2)transform.position).normalized;
             float   effectiveMass = Mathf.Max(metal.EffectiveMass, 0.01f);
             float   totalMass     = playerRb.mass + effectiveMass;
@@ -80,7 +100,7 @@ public class SteelPush : MonoBehaviour
         }
         else
         {
-            reserve?.MarkSteelUsed(); // marcar acero como usado durante boost
+            reserve?.MarkSteelUsed();
         }
 
         float strength = stats.allomanticStrength;

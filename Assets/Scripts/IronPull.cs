@@ -70,7 +70,23 @@ public class IronPull : MonoBehaviour
             }
 
             Coin coin = metal.GetComponent<Coin>();
-            if (coin != null) { coin.beingPulled = true; coin.Unanchor(); }
+            if (coin != null)
+            {
+                // Si la moneda está anclada en superficie estática (masa 9999),
+                // no desanclarla — el jugador se mueve hacia ella como ancla
+                bool anchoredToStatic = metal.anchoredMass >= 9999f;
+                if (!anchoredToStatic)
+                {
+                    coin.beingPulled = true;
+                    coin.Unanchor();
+                }
+    else
+    {
+        // Moneda anclada en suelo — no atraer al jugador hacia ella,
+        // simplemente ignorar hasta que Steel Push la desancle
+        continue;
+    }
+            }
 
             Vector2 pullTarget    = coinSpawn != null ? (Vector2)coinSpawn.position : (Vector2)transform.position;
             Vector2 dir           = (pullTarget - (Vector2)metal.transform.position).normalized;
@@ -92,7 +108,7 @@ public class IronPull : MonoBehaviour
             }
 
             if (debugLog)
-                Debug.Log($"[IronPull] '{metal.name}' | static={metalIsStatic} strength={strength:F1} metalShare={metalShare:F1} playerShare={playerShare:F1}");
+                Debug.Log($"[IronPull] '{metal.name}' | static={metalIsStatic} anchoredMass={metal.anchoredMass} strength={strength:F1} playerShare={playerShare:F1}");
         }
     }
 
@@ -121,7 +137,7 @@ public class IronPull : MonoBehaviour
         }
         else
         {
-            reserve?.MarkIronUsed(); // marcar hierro como usado durante boost
+            reserve?.MarkIronUsed();
         }
 
         float strength = stats.allomanticStrength;

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MetalFlask : MonoBehaviour
 {
-    public enum FlaskType { Steel, Iron, Duralumin }
+    public enum FlaskType { Steel, Iron, Pewter, Duralumin }
 
     [Header("Tipo")]
     public FlaskType flaskType = FlaskType.Steel;
@@ -26,15 +26,15 @@ public class MetalFlask : MonoBehaviour
         if (!obj.CompareTag("Player")) return;
 
         MetalReserve reserve = obj.GetComponent<MetalReserve>();
-        if (reserve != null)
-        {
-            float max = flaskType == FlaskType.Steel    ? reserve.maxSteel :
-                        flaskType == FlaskType.Iron     ? reserve.maxIron  :
-                                                          reserve.maxDuralumin;
-            reserve.Refill(flaskType, max * refillFraction);
-            Debug.Log($"[MetalFlask] Recogido frasco {flaskType} +{max * refillFraction:F0}.");
-        }
+        if (reserve == null) return;
 
+        float max = flaskType == FlaskType.Steel     ? reserve.maxSteel     :
+                    flaskType == FlaskType.Iron      ? reserve.maxIron      :
+                    flaskType == FlaskType.Pewter    ? reserve.maxPewter    :
+                                                       reserve.maxDuralumin;
+
+        reserve.Refill(flaskType, max * refillFraction);
+        Debug.Log($"[MetalFlask] Recogido frasco {flaskType} +{max * refillFraction:F0}.");
         Destroy(gameObject);
     }
 }

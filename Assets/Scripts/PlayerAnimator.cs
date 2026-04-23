@@ -8,6 +8,7 @@ public class PlayerAnimator : MonoBehaviour
     private static readonly int ParamIsGrounded = Animator.StringToHash("IsGrounded");
     private static readonly int ParamIsJumping  = Animator.StringToHash("IsJumping");
     private static readonly int ParamIsFalling  = Animator.StringToHash("IsFalling");
+    private static readonly int ParamAttack     = Animator.StringToHash("Attack");
 
     private Animator         anim;
     private Rigidbody2D      rb;
@@ -20,15 +21,22 @@ public class PlayerAnimator : MonoBehaviour
         pc   = GetComponent<PlayerController>();
     }
 
-    void Update()
+    void LateUpdate()
     {
+        if (pc.IsDashing) return;
+
         float speedX    = Mathf.Abs(rb.linearVelocity.x);
         float velocityY = rb.linearVelocity.y;
         bool  grounded  = pc.IsGrounded;
 
         anim.SetFloat(ParamSpeed,     speedX);
         anim.SetBool(ParamIsGrounded, grounded);
-        anim.SetBool(ParamIsJumping,  !grounded && velocityY > 0.1f);
+        anim.SetBool(ParamIsJumping,  !grounded && velocityY >  0.1f);
         anim.SetBool(ParamIsFalling,  !grounded && velocityY < -0.5f);
+    }
+
+    public void TriggerAttack()
+    {
+        anim.SetTrigger(ParamAttack);
     }
 }

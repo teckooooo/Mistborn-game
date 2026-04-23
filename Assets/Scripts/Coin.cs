@@ -8,6 +8,12 @@ public class Coin : MonoBehaviour
     [Header("Colección")]
     public float collectRadius = 1f;
 
+    [Header("Daño a enemigos")]
+    [Tooltip("Daño base que hace la moneda al impactar un enemigo")]
+    public float impactDamage = 20f;
+    [Tooltip("Velocidad mínima para que el impacto haga daño")]
+    public float minSpeedForDamage = 3f;
+
     [Header("Superficies de anclaje")]
     public string[] anchorTags = new string[] { "Ground" };
 
@@ -16,18 +22,23 @@ public class Coin : MonoBehaviour
     [Tooltip("Sorting Order cuando está anclada (detrás de la superficie)")]
     public int embeddedSortingOrder = -1;
 
-    private bool        anchored    = false;
-    private bool        unanchoring = false;
-    private Transform   playerTransform;
-    private Transform   spawnTarget;
-    private Vector2     impactNormal = Vector2.up;
-    private int         originalSortingOrder;
+    private bool           anchored    = false;
+    private bool           unanchoring = false;
+    private Transform      playerTransform;
+    private Transform      spawnTarget;
+    private Vector2        impactNormal = Vector2.up;
+    private int            originalSortingOrder;
     private SpriteRenderer sr;
-    private bool        collisionIgnored = false;
-    private GameObject  detectionColliderGo;
+    private bool           collisionIgnored = false;
+    private Rigidbody2D    rb;
+    private int            enemyLayer;
+    private LayerMask      enemyMask;
+
+    // ── Inicialización ────────────────────────────────────────────────────────
 
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         if (sr != null) originalSortingOrder = sr.sortingOrder;
 
@@ -38,7 +49,12 @@ public class Coin : MonoBehaviour
             PlayerController pc = player.GetComponent<PlayerController>();
             spawnTarget = (pc != null && pc.coinSpawn != null) ? pc.coinSpawn : player.transform;
         }
+
+        enemyLayer = LayerMask.NameToLayer("Enemy");
+        enemyMask  = 1 << enemyLayer;
     }
+
+    // ── Update ────────────────────────────────────────────────────────────────
 
     void Update()
     {
@@ -55,6 +71,8 @@ public class Coin : MonoBehaviour
         }
     }
 
+    // ── Colisión física ───────────────────────────────────────────────────────
+
     void IgnorePlayerCollision(bool ignore)
     {
         GameObject player = GameObject.FindWithTag("Player");
@@ -68,10 +86,41 @@ public class Coin : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (beingPulled && !unanchoring && collision.gameObject.CompareTag("Player"))
-        { Destroy(gameObject); return; }
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         if (collision.contactCount > 0)
             impactNormal = collision.GetContact(0).normal;
+
+        // Detectar enemigos cercanos con OverlapCircle en el punto de impacto
+        // Funciona independientemente de la matriz de Physics 2D
+        if (!anchored)
+        {
+            float speed = rb != null ? rb.linearVelocity.magnitude : 0f;
+            if (speed >= minSpeedForDamage)
+            {
+                Collider2D[] hits = Physics2D.OverlapCircleAll(
+                    transform.position, 0.4f, enemyMask);
+
+                foreach (Collider2D hit in hits)
+                {
+                    EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(impactDamage);
+                        Debug.Log($"[Coin] Impactó a {hit.name} por {impactDamage:F1} (vel: {speed:F1})");
+                    }
+                }
+
+                if (hits.Length > 0)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+        }
 
         if (!anchored && IsValidSurface(collision.gameObject.tag))
             Anchor(collision.gameObject);
@@ -87,16 +136,28 @@ public class Coin : MonoBehaviour
     void Anchor(GameObject hitObject)
     {
         anchored = true;
+
+        // No desactivar el collider — ignorar colisión con enemigos directamente
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+        {
+            int enemyLayerIndex = LayerMask.NameToLayer("Enemy");
+            foreach (Collider2D enemyCol in Physics2D.OverlapCircleAll(
+                transform.position, 50f, 1 << enemyLayerIndex))
+            {
+                Physics2D.IgnoreCollision(col, enemyCol, true);
+            }
+        }
+
         MetalObject metal = GetComponent<MetalObject>();
         if (metal != null)
         {
             Rigidbody2D hitRb = hitObject.GetComponent<Rigidbody2D>();
             metal.anchoredMass = hitRb != null ? hitRb.mass : 9999f;
         }
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+
         if (rb != null) { rb.linearVelocity = Vector2.zero; rb.bodyType = RigidbodyType2D.Static; }
 
-        // Ignorar colision con jugador mientras está anclada
         IgnorePlayerCollision(true);
         collisionIgnored = true;
 
@@ -105,7 +166,7 @@ public class Coin : MonoBehaviour
 
     void EmbedVisual()
     {
-        Vector2 embedDir = -impactNormal;
+        Vector2 embedDir   = -impactNormal;
         float spriteHeight = sr != null ? sr.bounds.size.y : 0.1f;
         transform.position += (Vector3)(embedDir * spriteHeight * embedFraction);
         if (sr != null) sr.sortingOrder = embeddedSortingOrder;
@@ -114,13 +175,14 @@ public class Coin : MonoBehaviour
     public void Unanchor()
     {
         if (!anchored) return;
-        anchored = false; unanchoring = true;
+        anchored    = false;
+        unanchoring = true;
 
         if (sr != null) sr.sortingOrder = originalSortingOrder;
 
         MetalObject metal = GetComponent<MetalObject>();
         if (metal != null) metal.anchoredMass = 0f;
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+
         if (rb != null) rb.bodyType = RigidbodyType2D.Dynamic;
 
         GameObject player = GameObject.FindWithTag("Player");
@@ -130,6 +192,7 @@ public class Coin : MonoBehaviour
             Collider2D cc = GetComponent<Collider2D>();
             if (pc != null && cc != null) Physics2D.IgnoreCollision(cc, pc, true);
         }
+
         Invoke(nameof(RestoreCollision), 0.15f);
     }
 

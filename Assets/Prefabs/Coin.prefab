@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -6590286329560446295}
   - component: {fileID: -5421459720006220088}
   - component: {fileID: -5104065846338488631}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coin
   m_TagString: Coin
   m_Icon: {fileID: 0}
@@ -187,6 +187,8 @@ MonoBehaviour:
   beingPulled: 0
   duraluminPulled: 0
   collectRadius: 0.4
+  impactDamage: 20
+  minSpeedForDamage: 3
   anchorTags:
   - Ground
   embedFraction: 0.25

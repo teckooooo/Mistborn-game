@@ -63,21 +63,34 @@ public class AllomancyTargeting : MonoBehaviour
     {
         candidates.Clear();
 
-        Vector3 mp     = Input.mousePosition;
-        mp.z           = Mathf.Abs(Camera.main.transform.position.z);
-        Vector2 mouse  = Camera.main.ScreenToWorldPoint(mp);
+        Vector3 mp    = Input.mousePosition;
+        mp.z          = Mathf.Abs(Camera.main.transform.position.z);
+        Vector2 mouse = Camera.main.ScreenToWorldPoint(mp);
         Vector2 origin = (Vector2)transform.position;
         Vector2 aimDir = (mouse - origin).normalized;
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(origin, EffectiveRadius);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(origin, EffectiveRadius, ~0);
 
+        // Usar HashSet para evitar agregar el mismo MetalObject dos veces
+        // (puede ocurrir si el objeto tiene múltiples colliders detectados)
+        var seen = new HashSet<MetalObject>();
+Debug.Log($"[Targeting] Hits detectados: {hits.Length}");
         foreach (Collider2D col in hits)
         {
+             Debug.Log($"  - {col.gameObject.name} | Layer: {col.gameObject.layer} | IsTrigger: {col.isTrigger} | Parent: {col.transform.parent?.name}");
             if (col.gameObject == gameObject) continue;
+
+            // Buscar MetalObject en el propio GameObject o en su padre
+            // Necesario para detectar colliders hijos como CoinAllomancyDetector
             MetalObject metal = col.GetComponent<MetalObject>();
+            if (metal == null) metal = col.GetComponentInParent<MetalObject>();
             if (metal == null) continue;
 
-            Vector2 toMetal = (Vector2)col.transform.position - origin;
+            // Evitar duplicados
+            if (seen.Contains(metal)) continue;
+            seen.Add(metal);
+
+            Vector2 toMetal = (Vector2)metal.transform.position - origin;
             float   dot     = Vector2.Dot(toMetal.normalized, aimDir);
             if (dot < 0) continue;
 

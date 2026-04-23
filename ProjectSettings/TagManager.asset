@@ -9,16 +9,17 @@ TagManager:
   - Metal
   - Muro
   - Nail
+  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Enemy
+  - Items
+  - Coins
   - 
   - 
   - 
