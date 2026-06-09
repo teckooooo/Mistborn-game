@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 public class IronPull : MonoBehaviour
@@ -27,11 +28,18 @@ public class IronPull : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(1))
+        if (PauseMenu.IsPaused)
+        {
+            UnmarkAllProjectiles(); // soltar todo si se pausa mientras se mantiene botón
+            return;
+        }
+
+        bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        if (Input.GetMouseButton(1) && !overUI)
             PullMetal();
 
         if (Input.GetMouseButtonUp(1))
-            UnmarkAllCoins();
+            UnmarkAllProjectiles();
     }
 
     public void PullTargets(List<MetalObject> targets, float strength)
@@ -107,6 +115,9 @@ public class IronPull : MonoBehaviour
                 playerRb.AddForce(-dir * playerShare, ForceMode2D.Force);
             }
 
+            // Notificar al MetalObject — 1 unidad/segundo independiente del strength
+            metal.OnAllomancyForce?.Invoke(Time.deltaTime);
+
             if (debugLog)
                 Debug.Log($"[IronPull] '{metal.name}' | static={metalIsStatic} anchoredMass={metal.anchoredMass} strength={strength:F1} playerShare={playerShare:F1}");
         }
@@ -116,18 +127,6 @@ public class IronPull : MonoBehaviour
     {
         if (stats == null) { Debug.LogError("[IronPull] AllomancyStats no encontrado."); return; }
 
-        bool bothActive = Input.GetKey(KeyCode.Q);
-        List<MetalObject> targets;
-        if (bothActive)
-        {
-            var (_, pull) = targeting.GetPushAndPullTargets();
-            targets = pull;
-        }
-        else
-            targets = targeting.GetPullTargets();
-
-        if (targets.Count == 0) { if (debugLog) Debug.LogWarning("[IronPull] Sin targets."); return; }
-
         bool duraluActive = reserve != null && reserve.DuraluMinActive && reserve.duraluMinAffectsIron;
 
         if (!duraluActive)
@@ -136,20 +135,116 @@ public class IronPull : MonoBehaviour
             reserve?.ConsumeIronPerSec(Time.deltaTime);
         }
         else
-        {
             reserve?.MarkIronUsed();
-        }
 
         float strength = stats.allomanticStrength;
         if (duraluActive) strength *= reserve.DuraluMinBoost;
 
-        PullTargets(targets, strength);
+        bool bothActive = Input.GetKey(KeyCode.Q);
+        if (bothActive)
+        {
+            // Q + Click derecho: targeting original (útil para combos físicos / Guardian)
+            var (_, pull) = targeting.GetPushAndPullTargets();
+            if (pull.Count == 0) { if (debugLog) Debug.LogWarning("[IronPull] Sin targets."); return; }
+            PullTargets(pull, strength);
+        }
+        else
+        {
+            // Click derecho solo: recall de TODOS los proyectiles propios en el radio
+            List<MetalObject> projectiles = GetAreaProjectiles();
+            if (projectiles.Count > 0)
+            {
+                RecallProjectiles(projectiles);
+            }
+            else
+            {
+                // Sin proyectiles propios → targeting normal (metales del entorno)
+                List<MetalObject> targets = targeting.GetPullTargets();
+                if (targets.Count == 0) { if (debugLog) Debug.LogWarning("[IronPull] Sin targets."); return; }
+                PullTargets(targets, strength);
+            }
+        }
     }
 
-    void UnmarkAllCoins()
+    /// <summary>
+    /// Devuelve todos los Coins y Nails dentro del radio de detección,
+    /// sin importar la dirección del cursor.
+    /// </summary>
+    List<MetalObject> GetAreaProjectiles()
+    {
+        float radius = targeting != null ? targeting.EffectiveRadius : detectionRadius;
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+
+        var result = new List<MetalObject>();
+        var seen   = new HashSet<MetalObject>();
+
+        foreach (Collider2D hit in hits)
+        {
+            if (hit.gameObject == gameObject) continue;
+
+            // Solo proyectiles del jugador (Coin o Nail)
+            bool isCoin = hit.GetComponent<Coin>() != null;
+            bool isNail = hit.GetComponent<Nail>() != null;
+            if (!isCoin && !isNail) continue;
+
+            MetalObject metal = hit.GetComponent<MetalObject>();
+            if (metal == null) metal = hit.GetComponentInParent<MetalObject>();
+            if (metal == null) continue;
+
+            if (seen.Contains(metal)) continue;
+            seen.Add(metal);
+            result.Add(metal);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Recall forzado: desancla y lanza hacia el jugador todas las monedas y clavos
+    /// de la lista, ignorando si estaban anclados al suelo.
+    /// </summary>
+    void RecallProjectiles(List<MetalObject> projectiles)
+    {
+        Vector2 pullTarget = coinSpawn != null ? (Vector2)coinSpawn.position : (Vector2)transform.position;
+        const float recallSpeed = 14f;
+
+        foreach (MetalObject metal in projectiles)
+        {
+            Rigidbody2D metalRb = metal.GetComponent<Rigidbody2D>();
+
+            Coin coin = metal.GetComponent<Coin>();
+            if (coin != null)
+            {
+                coin.Unanchor();          // pasa a Dynamic
+                coin.beingPulled = true;  // Coin.Update() la destruye al llegar
+                if (metalRb != null)
+                {
+                    Vector2 dir = (pullTarget - (Vector2)metal.transform.position).normalized;
+                    metalRb.linearVelocity = dir * recallSpeed;
+                }
+                continue;
+            }
+
+            Nail nail = metal.GetComponent<Nail>();
+            if (nail != null && !nail.Embedded)
+            {
+                nail.beingPulled = true;
+                if (metalRb != null)
+                {
+                    Vector2 dir = (pullTarget - (Vector2)metal.transform.position).normalized;
+                    metalRb.linearVelocity = dir * recallSpeed;
+                }
+            }
+            // Clavos incrustados: requieren Q + click derecho (Duraluminio)
+        }
+    }
+
+    void UnmarkAllProjectiles()
     {
         foreach (Coin coin in FindObjectsByType<Coin>(FindObjectsSortMode.None))
             coin.beingPulled = false;
+        foreach (Nail nail in FindObjectsByType<Nail>(FindObjectsSortMode.None))
+            nail.beingPulled = false;
     }
 
     void OnDrawGizmosSelected()

@@ -33,6 +33,7 @@ public class Coin : MonoBehaviour
     private Rigidbody2D    rb;
     private int            enemyLayer;
     private LayerMask      enemyMask;
+    private PlayerInventory inventory;
 
     // ── Inicialización ────────────────────────────────────────────────────────
 
@@ -48,6 +49,7 @@ public class Coin : MonoBehaviour
             playerTransform = player.transform;
             PlayerController pc = player.GetComponent<PlayerController>();
             spawnTarget = (pc != null && pc.coinSpawn != null) ? pc.coinSpawn : player.transform;
+            inventory = player.GetComponent<PlayerInventory>();
         }
 
         enemyLayer = LayerMask.NameToLayer("Enemy");
@@ -67,7 +69,7 @@ public class Coin : MonoBehaviour
         if (beingPulled && !unanchoring)
         {
             float dist = Vector2.Distance(transform.position, target.position);
-            if (dist < collectRadius) { Destroy(gameObject); return; }
+            if (dist < collectRadius) { inventory?.AddCoins(1); Destroy(gameObject); return; }
         }
     }
 
@@ -87,6 +89,7 @@ public class Coin : MonoBehaviour
     {
         if (beingPulled && !unanchoring && collision.gameObject.CompareTag("Player"))
         {
+            inventory?.AddCoins(1);
             Destroy(gameObject);
             return;
         }

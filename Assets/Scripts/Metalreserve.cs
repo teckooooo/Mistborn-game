@@ -100,6 +100,10 @@ public class MetalReserve : MonoBehaviour
 
         duraluMinTimer -= Time.deltaTime;
 
+        // Barra refleja el tiempo restante en tiempo real
+        currentDuralumin = Mathf.Max((duraluMinTimer / duraluMinDuration) * maxDuralumin, 0f);
+        OnDuraluminChanged?.Invoke(currentDuralumin, maxDuralumin);
+
         if (duraluMinTimer <= 0)
         {
             duraluMinActive = false;

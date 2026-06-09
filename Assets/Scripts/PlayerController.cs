@@ -20,10 +20,11 @@ public class PlayerController : MonoBehaviour
     public Transform  coinSpawn;
     public float      coinThrowForce = 20f;
 
-    private Rigidbody2D    rb;
-    private MetalReserve   reserve;
-    private SpriteRenderer sr;
-    private Animator       anim;
+    private Rigidbody2D     rb;
+    private MetalReserve    reserve;
+    private PlayerInventory inventory;
+    private SpriteRenderer  sr;
+    private Animator        anim;
 
     private bool       isGrounded;
     private bool       facingRight       = true;
@@ -37,14 +38,18 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        rb      = GetComponent<Rigidbody2D>();
-        sr      = GetComponent<SpriteRenderer>();
-        reserve = GetComponent<MetalReserve>();
-        anim    = GetComponent<Animator>();
+        rb        = GetComponent<Rigidbody2D>();
+        sr        = GetComponent<SpriteRenderer>();
+        reserve   = GetComponent<MetalReserve>();
+        inventory = GetComponent<PlayerInventory>();
+        anim      = GetComponent<Animator>();
+
     }
 
     void Update()
     {
+        if (PauseMenu.IsPaused) return;
+
         HandlePewter();
         Dash();
         if (!isDashing) Move();
@@ -145,8 +150,12 @@ public class PlayerController : MonoBehaviour
     void ThrowCoin()
     {
         if (!Input.GetKeyDown(KeyCode.E)) return;
-        if (reserve != null && !reserve.HasSteel) { Debug.Log("[PlayerController] Sin Acero."); return; }
+        if (inventory != null && !inventory.HasCoins) { Debug.Log("[PlayerController] Sin monedas."); return; }
+        if (reserve != null && !reserve.HasSteel)     { Debug.Log("[PlayerController] Sin Acero."); return; }
+
+        inventory?.ConsumeCoin();
         reserve?.ConsumeCoin();
+
         GameObject coin = Instantiate(coinPrefab, coinSpawn.position, Quaternion.identity);
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;

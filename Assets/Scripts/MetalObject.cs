@@ -6,6 +6,13 @@ public class MetalObject : MonoBehaviour
 
     [HideInInspector] public float anchoredMass = 0f; // masa del objeto en que está clavado
 
+    /// <summary>
+    /// Disparado cuando Steel Push o Iron Pull aplican fuerza sobre este objeto.
+    /// El parámetro es allomanticStrength * Time.deltaTime del frame actual.
+    /// GuardianWeapon lo usa para acumular fuerza y detectar el desarme.
+    /// </summary>
+    public System.Action<float> OnAllomancyForce;
+
     private Rigidbody2D rb;
 
     void Start()

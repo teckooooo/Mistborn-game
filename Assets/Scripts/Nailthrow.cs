@@ -8,12 +8,14 @@ public class NailThrow : MonoBehaviour
     public float      nailForce = 25f;
 
     private MetalReserve       reserve;
+    private PlayerInventory    inventory;
     private AllomancyTargeting targeting;
     private Rigidbody2D        playerRb;
 
     void Start()
     {
         reserve   = GetComponent<MetalReserve>();
+        inventory = GetComponent<PlayerInventory>();
         targeting = GetComponent<AllomancyTargeting>();
         playerRb  = GetComponent<Rigidbody2D>();
     }
@@ -21,6 +23,8 @@ public class NailThrow : MonoBehaviour
     void Update()
     {
         SyncSpawnFlip();
+
+        if (PauseMenu.IsPaused) return;
 
         if (Input.GetKeyDown(KeyCode.R))
             ThrowNail();
@@ -45,8 +49,10 @@ public class NailThrow : MonoBehaviour
     void ThrowNail()
     {
         if (nailPrefab == null) { Debug.LogWarning("[NailThrow] nailPrefab no asignado."); return; }
-        if (reserve != null && !reserve.HasSteel) { Debug.Log("[NailThrow] Sin Acero."); return; }
+        if (inventory != null && !inventory.HasNails) { Debug.Log("[NailThrow] Sin clavos."); return; }
+        if (reserve != null && !reserve.HasSteel)     { Debug.Log("[NailThrow] Sin Acero."); return; }
 
+        inventory?.ConsumeNail();
         reserve?.ConsumeNail();
 
         Vector3 spawnPos = nailSpawn != null ? nailSpawn.position : transform.position;

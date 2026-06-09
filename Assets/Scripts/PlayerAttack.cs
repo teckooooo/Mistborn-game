@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Ataque cuerpo a cuerpo de Fantasma.
@@ -44,7 +45,11 @@ public class PlayerAttack : MonoBehaviour
         if (attackTimer > 0)
             attackTimer -= Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(0) && attackTimer <= 0)
+        if (PauseMenu.IsPaused) return;
+
+        // Ignorar click si el cursor está sobre un elemento de UI
+        bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        if (Input.GetMouseButtonDown(0) && attackTimer <= 0 && !overUI)
             Attack();
     }
 

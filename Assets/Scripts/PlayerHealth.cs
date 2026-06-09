@@ -85,11 +85,22 @@ public class PlayerHealth : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
+    /// <summary>
+    /// Mata al jugador instantáneamente ignorando invencibilidad y reducción
+    /// de Pewter. Para zonas de muerte instantánea (lava, vacío, pinchos).
+    /// </summary>
+    public void Kill()
+    {
+        if (IsDead) return;
+        currentHealth = 0f;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        Die();
+    }
+
     void Die()
     {
-        Debug.Log("[PlayerHealth] Jugador muerto — reiniciando nivel.");
+        Debug.Log("[PlayerHealth] Jugador muerto — cargando pantalla de muerte.");
         OnDeath?.Invoke();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        DeathScreen.GoToDeathScreen();
     }
 }

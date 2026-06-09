@@ -24,6 +24,8 @@ public class SteelPush : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenu.IsPaused) return;
+
         if (Input.GetKey(KeyCode.Q))
             PushMetal();
     }
@@ -69,6 +71,9 @@ public class SteelPush : MonoBehaviour
 
             ForceMode2D mode = metalIsStatic ? ForceMode2D.Impulse : ForceMode2D.Force;
             playerRb.AddForce(-dir * playerShare, mode);
+
+            // Notificar al MetalObject — 1 unidad/segundo independiente del strength
+            metal.OnAllomancyForce?.Invoke(Time.deltaTime);
 
             if (debugLog)
                 Debug.Log($"[SteelPush] '{metal.name}' | static={metalIsStatic} strength={strength} playerShare={playerShare:F1}");

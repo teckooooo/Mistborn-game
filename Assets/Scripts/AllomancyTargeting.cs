@@ -74,10 +74,9 @@ public class AllomancyTargeting : MonoBehaviour
         // Usar HashSet para evitar agregar el mismo MetalObject dos veces
         // (puede ocurrir si el objeto tiene múltiples colliders detectados)
         var seen = new HashSet<MetalObject>();
-Debug.Log($"[Targeting] Hits detectados: {hits.Length}");
+
         foreach (Collider2D col in hits)
         {
-             Debug.Log($"  - {col.gameObject.name} | Layer: {col.gameObject.layer} | IsTrigger: {col.isTrigger} | Parent: {col.transform.parent?.name}");
             if (col.gameObject == gameObject) continue;
 
             // Buscar MetalObject en el propio GameObject o en su padre

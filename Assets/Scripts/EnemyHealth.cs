@@ -58,6 +58,11 @@ public class EnemyHealth : MonoBehaviour
     void Die()
     {
         Debug.Log($"[EnemyHealth] {gameObject.name} eliminado.");
+
+        // Deshabilitar collider para que los drops no colisionen con el cadáver
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
         OnDeath?.Invoke();
         Destroy(gameObject, deathDelay);
     }

@@ -9,8 +9,8 @@ public class CultistAnimator : MonoBehaviour
     private CultistAI   ai;
     private EnemyHealth health;
 
-    private bool deathPlayed    = false;
-    private bool attackPlaying  = false;
+    private bool deathPlayed   = false;
+    private bool attackPlaying = false;
 
     void Start()
     {
@@ -20,12 +20,16 @@ public class CultistAnimator : MonoBehaviour
 
         health.OnDeath.RemoveListener(OnDead);
         health.OnDeath.AddListener(OnDead);
+        health.OnDamaged.AddListener(OnHit);
     }
 
     void OnDestroy()
     {
         if (health != null)
+        {
             health.OnDeath.RemoveListener(OnDead);
+            health.OnDamaged.RemoveListener(OnHit);
+        }
     }
 
     void Update()
@@ -37,7 +41,6 @@ public class CultistAnimator : MonoBehaviour
         {
             attackPlaying = true;
             anim.Play("attack_enemy1", 0, 0f);
-            // Volver a idle después de la duración del clip
             Invoke(nameof(EndAttack), ai.AttackCooldown);
             return;
         }
@@ -54,6 +57,12 @@ public class CultistAnimator : MonoBehaviour
         attackPlaying = false;
         if (!health.IsDead)
             anim.Play("idle", 0, 0f);
+    }
+
+    void OnHit()
+    {
+        if (health.IsDead || attackPlaying) return;
+        anim.Play("hit", 0, 0f);
     }
 
     void OnDead()

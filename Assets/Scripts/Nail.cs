@@ -9,6 +9,14 @@ public class Nail : MonoBehaviour
     [Header("Colección")]
     public float collectRadius = 1f;
 
+    [Header("Daño a enemigos")]
+    [Tooltip("Daño base que hace el clavo al impactar un enemigo")]
+    public float impactDamage = 30f;
+    [Tooltip("Velocidad mínima para que el impacto haga daño")]
+    public float minSpeedForDamage = 3f;
+    [Tooltip("Radio del OverlapCircle al impactar (para detectar enemigos cercanos)")]
+    public float impactRadius = 0.4f;
+
     [Header("Superficies de incrustación")]
     public string[] anchorTags = new string[] { "Ground", "Muro", "Piso", "Pasto", "Cristal" };
 
@@ -31,6 +39,8 @@ public class Nail : MonoBehaviour
     private float pullTimer   = 0f;
     private float maxPullTime = 5f;
     private bool  collisionIgnored = false;
+    private PlayerInventory inventory;
+    private LayerMask       enemyMask;
 
     void Start()
     {
@@ -44,7 +54,11 @@ public class Nail : MonoBehaviour
             playerTransform = player.transform;
             NailThrow nt = player.GetComponent<NailThrow>();
             spawnTarget = (nt != null && nt.nailSpawn != null) ? nt.nailSpawn : player.transform;
+            inventory = player.GetComponent<PlayerInventory>();
         }
+
+        int enemyLayer = LayerMask.NameToLayer("Enemy");
+        enemyMask      = 1 << enemyLayer;
     }
 
     void Update()
@@ -61,7 +75,7 @@ public class Nail : MonoBehaviour
             Vector2 dir  = ((Vector2)target.position - (Vector2)transform.position).normalized;
             float   dist = Vector2.Distance(transform.position, target.position);
             if (rb != null) { rb.gravityScale = 0f; rb.linearVelocity = dir * 20f; }
-            if (dist < collectRadius) { Destroy(gameObject); return; }
+            if (dist < collectRadius) { inventory?.AddNails(1); Destroy(gameObject); return; }
         }
 
         if (beingPulled && !unanchoring)
@@ -69,7 +83,7 @@ public class Nail : MonoBehaviour
             pullTimer += Time.deltaTime;
             if (rb != null) rb.gravityScale = 0f;
             float dist = Vector2.Distance(transform.position, target.position);
-            if (dist < collectRadius) { Destroy(gameObject); return; }
+            if (dist < collectRadius) { inventory?.AddNails(1); Destroy(gameObject); return; }
             if (rb != null && rb.linearVelocity.magnitude < 0.1f && pullTimer > 0.5f)
             {
                 beingPulled = false; duraluminPulled = false;
@@ -92,7 +106,37 @@ public class Nail : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (beingPulled && !unanchoring && collision.gameObject.CompareTag("Player"))
-        { Destroy(gameObject); return; }
+        { inventory?.AddNails(1); Destroy(gameObject); return; }
+
+        // Detección de enemigos en el punto de impacto (mismo patrón que la moneda).
+        // Funciona aunque el enemigo no esté en la matriz de colisión física del clavo.
+        if (!embedded)
+        {
+            float speed = rb != null ? rb.linearVelocity.magnitude : 0f;
+            if (speed >= minSpeedForDamage)
+            {
+                Collider2D[] hits = Physics2D.OverlapCircleAll(
+                    transform.position, impactRadius, enemyMask);
+
+                bool damaged = false;
+                foreach (Collider2D hit in hits)
+                {
+                    EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(impactDamage);
+                        Debug.Log($"[Nail] Impactó a {hit.name} por {impactDamage:F1} (vel: {speed:F1})");
+                        damaged = true;
+                    }
+                }
+
+                if (damaged)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+        }
 
         if (!embedded && !collision.gameObject.CompareTag("Player") && IsValidSurface(collision.gameObject.tag))
         {

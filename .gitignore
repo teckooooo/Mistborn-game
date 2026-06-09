@@ -1,12 +1,19 @@
+# Unity generated
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
 [Ll]ogs/
+[Mm]emoryCaptures/
 UserSettings/
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
 
+# Visual Studio / Rider
 .vscode/
+.idea/
 *.csproj
 *.unityproj
 *.sln
@@ -21,3 +28,18 @@ UserSettings/
 *.mdb
 *.opendb
 *.VC.db
+
+# Plastic SCM
+.plastic/
+
+# Archivos comprimidos grandes (assets originales)
+*.zip
+*.rar
+*.7z
+
+# Archivos de crash
+sysinfo.txt
+*.stackdump
+
+# Cachés de assets
+*.unitypackage
