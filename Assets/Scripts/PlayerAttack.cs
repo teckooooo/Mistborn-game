@@ -4,7 +4,6 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// Ataque cuerpo a cuerpo de Fantasma.
 /// Click izquierdo → golpe en dirección que mira → daña enemigos en rango.
-/// Si Pewter está activo, el daño se multiplica.
 /// </summary>
 public class PlayerAttack : MonoBehaviour
 {
@@ -12,10 +11,6 @@ public class PlayerAttack : MonoBehaviour
     public float attackDamage   = 15f;
     public float attackRange    = 1.2f;
     public float attackCooldown = 0.4f;
-
-    [Header("Pewter — bonus de daño")]
-    [Tooltip("Multiplicador de daño cuando Pewter está activo")]
-    public float pewterDamageMultiplier = 2f;
 
     [Header("Detección")]
     [Tooltip("Layer de los enemigos — crear un Layer 'Enemy' en Unity")]
@@ -68,18 +63,13 @@ public class PlayerAttack : MonoBehaviour
 
         Collider2D[] hits = Physics2D.OverlapBoxAll(boxCenter, boxSize, 0f, enemyLayer);
 
-        bool  pewterOn    = reserve != null && reserve.PewterActive;
-        float multiplier  = pewterOn ? pewterDamageMultiplier : 1f;
-        float finalDamage = attackDamage * multiplier;
-
         foreach (Collider2D hit in hits)
         {
             EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
-                enemy.TakeDamage(finalDamage);
-                Debug.Log($"[PlayerAttack] Golpeó a {hit.name} por {finalDamage:F1}" +
-                          $"{(pewterOn ? " (Pewter activo)" : "")}");
+                enemy.TakeDamage(attackDamage);
+                Debug.Log($"[PlayerAttack] Golpeó a {hit.name} por {attackDamage:F1}");
             }
         }
 

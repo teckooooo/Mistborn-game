@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MetalFlask : MonoBehaviour
 {
-    public enum FlaskType { Steel, Iron, Pewter, Duralumin }
+    public enum FlaskType { Steel, Iron }
 
     [Header("Tipo")]
     public FlaskType flaskType = FlaskType.Steel;

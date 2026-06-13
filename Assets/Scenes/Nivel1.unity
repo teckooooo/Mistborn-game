@@ -987,7 +987,6 @@ MonoBehaviour:
   dashForce: 20
   dashDuration: 0.4
   dashCooldown: 0.2
-  pewterKey: 306
   coinPrefab: {fileID: 6562062035694803408, guid: ede87799d5080b54fb12b643897c9361, type: 3}
   coinSpawn: {fileID: 1315670814}
   coinThrowForce: 20
@@ -1023,7 +1022,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AllomancyStats
   allomanticStrength: 2
-  duraluMinRadiusMultiplier: 2
 --- !u!114 &105887927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1094,41 +1092,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MetalReserve
   maxSteel: 100
   maxIron: 100
-  maxPewter: 100
-  maxDuralumin: 100
   currentSteel: 100
   currentIron: 100
-  currentPewter: 0
-  currentDuralumin: 0
   steelCostPerSec: 5
   ironCostPerSec: 5
-  pewterCostPerSec: 8
   nailCost: 10
   coinCost: 5
-  pewterJumpMultiplier: 1.4
-  pewterSpeedMultiplier: 1.3
-  pewterDamageReduction: 0.4
-  pewterActive: 0
-  duraluMinBoost: 10
-  duraluMinDuration: 5
-  duraluMinAffectsSteel: 1
-  duraluMinAffectsIron: 1
-  duraluMinAffectsPewter: 0
-  duraluMinActive: 0
-  duraluMinTimer: 0
   OnSteelChanged:
     m_PersistentCalls:
       m_Calls: []
   OnIronChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPewterChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDuraluminChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPewterToggled:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &105887932
@@ -1172,7 +1145,6 @@ MonoBehaviour:
   attackDamage: 15
   attackRange: 2
   attackCooldown: 0
-  pewterDamageMultiplier: 2
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1218,22 +1190,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5dbb169e1cdf3f4db7d7bdcd51ffa9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  maxCoins: 15
+  maxNails: 99
   startCoins: 15
   startNails: 10
   maxSteelFlasks: 5
   maxIronFlasks: 3
-  maxPewterFlasks: 5
-  maxDuraluminFlasks: 2
   startSteelFlasks: 4
   startIronFlasks: 4
-  startPewterFlasks: 4
-  startDuraluminFlasks: 4
   currentCoins: 0
   currentNails: 0
   currentSteelFlasks: 0
   currentIronFlasks: 0
-  currentPewterFlasks: 0
-  currentDuraluminFlasks: 0
 --- !u!114 &105887937
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1248,8 +1216,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlaskUser
   steelKey: 50
   ironKey: 49
-  pewterKey: 51
-  duraluminKey: 52
   refillFraction: 0.5
 --- !u!1 &157461686
 GameObject:
@@ -1405,7 +1371,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &172793791
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5706,7 +5672,7 @@ RectTransform:
   m_Father: {fileID: 53146891}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 10.5, y: -0.6999998}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6901,12 +6867,6 @@ MonoBehaviour:
   iron:
     bar: {fileID: 1198240272}
     flaskText: {fileID: 631273416}
-  pewter:
-    bar: {fileID: 1877374932}
-    flaskText: {fileID: 1780836732}
-  duralumin:
-    bar: {fileID: 172793792}
-    flaskText: {fileID: 2135555389}
   inventory: {fileID: 105887936}
 --- !u!1 &1251214528
 GameObject:
@@ -7397,7 +7357,7 @@ RectTransform:
   m_Father: {fileID: 292328483}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -9624,7 +9584,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1877374931
 RectTransform:
   m_ObjectHideFlags: 0

@@ -68,8 +68,32 @@ public class Coin : MonoBehaviour
 
         if (beingPulled && !unanchoring)
         {
+            // Detectar enemigos en vuelo (las colisiones pueden estar ignoradas tras desanclarse)
+            float speed = rb != null ? rb.linearVelocity.magnitude : 0f;
+            if (speed >= minSpeedForDamage)
+            {
+                Collider2D[] enemyHits = Physics2D.OverlapCircleAll(transform.position, 0.3f, enemyMask);
+                foreach (Collider2D hit in enemyHits)
+                {
+                    EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(impactDamage);
+                        Destroy(gameObject);
+                        return;
+                    }
+                }
+            }
+
             float dist = Vector2.Distance(transform.position, target.position);
-            if (dist < collectRadius) { inventory?.AddCoins(1); Destroy(gameObject); return; }
+            if (dist < collectRadius)
+            {
+                if (inventory != null && !inventory.AddCoins(1))
+                    Bounce(target.position); // inventario lleno → rebotar
+                else
+                    Destroy(gameObject);
+                return;
+            }
         }
     }
 
@@ -89,8 +113,10 @@ public class Coin : MonoBehaviour
     {
         if (beingPulled && !unanchoring && collision.gameObject.CompareTag("Player"))
         {
-            inventory?.AddCoins(1);
-            Destroy(gameObject);
+            if (inventory != null && !inventory.AddCoins(1))
+                Bounce(collision.transform.position); // inventario lleno → rebotar
+            else
+                Destroy(gameObject);
             return;
         }
 
@@ -209,5 +235,25 @@ public class Coin : MonoBehaviour
             Collider2D cc = GetComponent<Collider2D>();
             if (pc != null && cc != null) Physics2D.IgnoreCollision(cc, pc, false);
         }
+    }
+
+    /// <summary>Rebota la moneda alejándola del jugador cuando el inventario está lleno.</summary>
+    void Bounce(Vector2 playerPos)
+    {
+        beingPulled = false;
+
+        if (rb != null)
+        {
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            Vector2 dir = ((Vector2)transform.position - playerPos).normalized;
+            if (dir == Vector2.zero) dir = Vector2.up;
+            rb.linearVelocity = Vector2.zero;
+            rb.AddForce(dir * 5f + Vector2.up * 3f, ForceMode2D.Impulse);
+        }
+
+        // Ignorar colisión con el jugador brevemente para que no se trabe
+        IgnorePlayerCollision(true);
+        collisionIgnored = true;
+        Invoke(nameof(RestoreCollision), 0.4f);
     }
 }

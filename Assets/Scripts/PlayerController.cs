@@ -12,8 +12,6 @@ public class PlayerController : MonoBehaviour
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
 
-    [Header("Pewter — tecla")]
-    public KeyCode pewterKey = KeyCode.LeftControl;
 
     [Header("Coin Throw")]
     public GameObject coinPrefab;
@@ -50,7 +48,6 @@ public class PlayerController : MonoBehaviour
     {
         if (PauseMenu.IsPaused) return;
 
-        HandlePewter();
         Dash();
         if (!isDashing) Move();
         Jump();
@@ -71,22 +68,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandlePewter()
-    {
-        if (reserve == null) return;
-        bool keyHeld = Input.GetKey(pewterKey);
-        if (keyHeld)
-        {
-            if (!reserve.PewterActive) reserve.ActivatePewter();
-            reserve.ConsumePewterPerSec(Time.deltaTime);
-        }
-        else reserve.DeactivatePewter();
-    }
-
     void Move()
     {
         float move  = Input.GetAxis("Horizontal");
-        float speed = moveSpeed * reserve.PewterSpeedMultiplier;
+        float speed = moveSpeed;
         rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
 
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -113,7 +98,7 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         if (!Input.GetKeyDown(KeyCode.Space) || !isGrounded) return;
-        float force = jumpForce * reserve.PewterJumpMultiplier;
+        float force = jumpForce;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, force);
     }
 

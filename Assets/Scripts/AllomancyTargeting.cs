@@ -10,17 +10,7 @@ public class AllomancyTargeting : MonoBehaviour
 
     private List<(MetalObject metal, float score)> candidates = new();
 
-    public float EffectiveRadius
-    {
-        get
-        {
-            MetalReserve   r = GetComponent<MetalReserve>();
-            AllomancyStats s = GetComponent<AllomancyStats>();
-            if (r != null && r.DuraluMinActive && s != null)
-                return detectionRadius * s.duraluMinRadiusMultiplier;
-            return detectionRadius;
-        }
-    }
+    public float EffectiveRadius => detectionRadius;
 
     public List<MetalObject> GetPushTargets() => GetTargets(maxPushTargets);
     public List<MetalObject> GetPullTargets() => GetTargets(maxPullTargets);

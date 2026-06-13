@@ -3,18 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Muestra en pantalla las reservas de metal (barras) y el conteo de frascos.
-///
-/// ─── Setup en Unity ───────────────────────────────────────────────────────
-/// 1. Crear un GameObject "MetalUI" en el Canvas.
-/// 2. Por cada metal, crear una Slider y (opcional) un TextMeshPro para frascos.
-/// 3. Arrastrar el Player al campo Inventory.
-///    MetalReserve se encuentra automáticamente desde el Player.
-///
-/// ─── Configurar cada Slider ───────────────────────────────────────────────
-///   Min Value = 0 | Max Value = 100 | Interactable = OFF
-///   Fill Area > Fill: cambiar color según el metal.
-/// ─────────────────────────────────────────────────────────────────────────
+/// Muestra en pantalla las reservas de Acero y Hierro (barras) y el conteo de frascos.
 /// </summary>
 public class MetalUI : MonoBehaviour
 {
@@ -33,21 +22,12 @@ public class MetalUI : MonoBehaviour
     [Header("Hierro — Click derecho")]
     public MetalBarEntry iron;
 
-    [Header("Estaño — LeftCtrl")]
-    public MetalBarEntry pewter;
-
-    [Header("Duraluminio — F")]
-    public MetalBarEntry duralumin;
-
     [Header("Jugador")]
     public PlayerInventory inventory;   // ← arrastra el Player aquí
 
     private MetalReserve reserve;
 
-    // ── Inicialización ────────────────────────────────────────────────────────
-
-    // Guardamos referencias para poder desuscribir en OnDestroy
-    private UnityEngine.Events.UnityAction<float,float> onSteelRes, onIronRes, onPewterRes, onDuralRes;
+    private UnityEngine.Events.UnityAction<float,float> onSteelRes, onIronRes;
 
     void Start()
     {
@@ -64,47 +44,30 @@ public class MetalUI : MonoBehaviour
             return;
         }
 
-        // UnityEvent<float,float> → AddListener
-        onSteelRes  = (cur, max) => SetBar(steel,     cur, max);
-        onIronRes   = (cur, max) => SetBar(iron,      cur, max);
-        onPewterRes = (cur, max) => SetBar(pewter,    cur, max);
-        onDuralRes  = (cur, max) => SetBar(duralumin, cur, max);
+        onSteelRes = (cur, max) => SetBar(steel, cur, max);
+        onIronRes  = (cur, max) => SetBar(iron,  cur, max);
 
-        reserve.OnSteelChanged    .AddListener(onSteelRes);
-        reserve.OnIronChanged     .AddListener(onIronRes);
-        reserve.OnPewterChanged   .AddListener(onPewterRes);
-        reserve.OnDuraluminChanged.AddListener(onDuralRes);
+        reserve.OnSteelChanged.AddListener(onSteelRes);
+        reserve.OnIronChanged .AddListener(onIronRes);
 
-        // System.Action<int> → +=
-        inventory.OnSteelFlasksChanged     += n => SetFlaskText(steel,     n);
-        inventory.OnIronFlasksChanged      += n => SetFlaskText(iron,      n);
-        inventory.OnPewterFlasksChanged    += n => SetFlaskText(pewter,    n);
-        inventory.OnDuraluminFlasksChanged += n => SetFlaskText(duralumin, n);
+        inventory.OnSteelFlasksChanged += n => SetFlaskText(steel, n);
+        inventory.OnIronFlasksChanged  += n => SetFlaskText(iron,  n);
 
-        // Valores iniciales
-        SetBar(steel,     reserve.CurrentSteel,     reserve.maxSteel);
-        SetBar(iron,      reserve.CurrentIron,      reserve.maxIron);
-        SetBar(pewter,    reserve.CurrentPewter,    reserve.maxPewter);
-        SetBar(duralumin, reserve.CurrentDuralumin, reserve.maxDuralumin);
+        SetBar(steel, reserve.CurrentSteel, reserve.maxSteel);
+        SetBar(iron,  reserve.CurrentIron,  reserve.maxIron);
 
-        SetFlaskText(steel,     inventory.SteelFlasks);
-        SetFlaskText(iron,      inventory.IronFlasks);
-        SetFlaskText(pewter,    inventory.PewterFlasks);
-        SetFlaskText(duralumin, inventory.DuraluminFlasks);
+        SetFlaskText(steel, inventory.SteelFlasks);
+        SetFlaskText(iron,  inventory.IronFlasks);
     }
 
     void OnDestroy()
     {
         if (reserve != null)
         {
-            reserve.OnSteelChanged    .RemoveListener(onSteelRes);
-            reserve.OnIronChanged     .RemoveListener(onIronRes);
-            reserve.OnPewterChanged   .RemoveListener(onPewterRes);
-            reserve.OnDuraluminChanged.RemoveListener(onDuralRes);
+            reserve.OnSteelChanged.RemoveListener(onSteelRes);
+            reserve.OnIronChanged .RemoveListener(onIronRes);
         }
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     void SetBar(MetalBarEntry entry, float current, float max)
     {

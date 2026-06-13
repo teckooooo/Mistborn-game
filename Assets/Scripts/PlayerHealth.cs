@@ -47,12 +47,9 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isInvincible || IsDead) return;
 
-        float reduction  = reserve != null ? reserve.PewterDamageReduction : 0f;
-        float finalDamage = amount * (1f - reduction);
+        currentHealth = Mathf.Max(currentHealth - amount, 0);
 
-        currentHealth = Mathf.Max(currentHealth - finalDamage, 0);
-
-        Debug.Log($"[PlayerHealth] Daño: {finalDamage:F1} (reducción Pewter {reduction * 100:F0}%) | HP: {currentHealth:F1}/{maxHealth}");
+        Debug.Log($"[PlayerHealth] Daño: {amount:F1} | HP: {currentHealth:F1}/{maxHealth}");
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
         OnDamaged?.Invoke();

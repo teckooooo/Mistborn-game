@@ -34,8 +34,6 @@ public class EnemyDrop : MonoBehaviour
     [Header("Frascos (chance 0-1)")]
     public FlaskDrop steelFlask;
     public FlaskDrop ironFlask;
-    public FlaskDrop pewterFlask;
-    public FlaskDrop duraluminFlask;
 
     [Header("Dispersión")]
     [Tooltip("Fuerza con la que salen despedidos los drops")]
@@ -67,8 +65,6 @@ public class EnemyDrop : MonoBehaviour
         bool anyDropped = false;
         anyDropped |= TryDropFlask(steelFlask);
         anyDropped |= TryDropFlask(ironFlask);
-        anyDropped |= TryDropFlask(pewterFlask);
-        anyDropped |= TryDropFlask(duraluminFlask);
 
         // Garantizar al menos uno si ninguno salió
         if (!anyDropped)
@@ -89,10 +85,8 @@ public class EnemyDrop : MonoBehaviour
     void ForceDropOneFlask()
     {
         var available = new System.Collections.Generic.List<FlaskDrop>();
-        if (steelFlask.prefab     != null) available.Add(steelFlask);
-        if (ironFlask.prefab      != null) available.Add(ironFlask);
-        if (pewterFlask.prefab    != null) available.Add(pewterFlask);
-        if (duraluminFlask.prefab != null) available.Add(duraluminFlask);
+        if (steelFlask.prefab != null) available.Add(steelFlask);
+        if (ironFlask.prefab  != null) available.Add(ironFlask);
 
         if (available.Count == 0) return;
         SpawnItem(available[Random.Range(0, available.Count)].prefab, 0, 1);

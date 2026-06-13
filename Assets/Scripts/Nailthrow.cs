@@ -28,10 +28,6 @@ public class NailThrow : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
             ThrowNail();
-
-        // F → activar Duraluminio general
-        if (Input.GetKeyDown(KeyCode.F))
-            reserve?.ActivateDuraluMin();
     }
 
     void SyncSpawnFlip()
