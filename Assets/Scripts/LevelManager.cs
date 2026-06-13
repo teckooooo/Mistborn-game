@@ -61,4 +61,12 @@ public static class LevelManager
         PlayerPrefs.Save();
         Debug.Log("[LevelManager] Progreso borrado.");
     }
+
+    /// <summary>Desbloquea todos los niveles (útil para debug/testing).</summary>
+    public static void UnlockAll()
+    {
+        PlayerPrefs.SetInt(PrefKey, TotalLevels);
+        PlayerPrefs.Save();
+        Debug.Log("[LevelManager] Todos los niveles desbloqueados.");
+    }
 }

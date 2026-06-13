@@ -27,8 +27,16 @@ public class LevelSelect : MonoBehaviour
     [Header("Botón volver")]
     public Button backButton;
 
+    [Header("Debug")]
+    [Tooltip("Si está activo, desbloquea TODOS los niveles al abrir el menú. " +
+             "Solo para testing — desactívalo antes de publicar.")]
+    public bool unlockAllForTesting = false;
+
     void Start()
     {
+        if (unlockAllForTesting)
+            LevelManager.UnlockAll();
+
         RefreshButtons();
 
         if (backButton != null)
@@ -71,6 +79,14 @@ public class LevelSelect : MonoBehaviour
     void DebugReset()
     {
         LevelManager.ResetProgress();
+        RefreshButtons();
+    }
+
+    // Desbloquear todos los niveles para probar (debug)
+    [ContextMenu("Desbloquear todo (Debug)")]
+    void DebugUnlockAll()
+    {
+        LevelManager.UnlockAll();
         RefreshButtons();
     }
 }
