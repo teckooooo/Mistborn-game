@@ -41,6 +41,14 @@ public class ParallaxBackground : MonoBehaviour
              "para no superponer copias. Si solo hay 1 sprite, deja 1.")]
     [Range(1, 9)] public int tileCount = 1;
 
+    [Header("Deriva constante (ej. nubes)")]
+    [Tooltip("Velocidad de desplazamiento horizontal constante en unidades/seg, " +
+             "independiente de la cámara. Para nubes que se mueven solas. " +
+             "Positivo = derecha, negativo = izquierda. 0 = sin deriva. " +
+             "Para que repita sin costuras, activa 'infiniteHorizontal' y usa " +
+             "tileCount ≥ 2 con un sprite tileable.")]
+    public float constantScrollSpeed = 0f;
+
     [Header("Cámara objetivo (opcional)")]
     [Tooltip("Si está vacío usa Camera.main automáticamente.")]
     public Transform targetCamera;
@@ -93,6 +101,11 @@ public class ParallaxBackground : MonoBehaviour
             0f);
 
         transform.position += move;
+
+        // Deriva constante (ej. nubes a la deriva), independiente de la cámara.
+        if (constantScrollSpeed != 0f)
+            transform.position += new Vector3(constantScrollSpeed * Time.deltaTime, 0f, 0f);
+
         lastCamPos = targetCamera.position;
 
         if (infiniteHorizontal)
