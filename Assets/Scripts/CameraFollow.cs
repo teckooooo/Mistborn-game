@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class CameraFollow : MonoBehaviour
 {
     public Transform player;
@@ -16,86 +17,103 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("Y fijo usado solo cuando 'followVertical' está apagado.")]
     public float fixedY = 0f;
 
-    [Header("Zona muerta vertical")]
-    [Tooltip("Altura (en unidades de mundo) de la banda central donde el jugador " +
-             "puede moverse SIN que la cámara se mueva. La cámara solo se desplaza " +
-             "cuando el jugador sale de la banda (ej. baja a otra plataforma o " +
-             "salta muy alto). 0 = cámara pegada al jugador (siempre centrado). " +
-             "Valores típicos: 3–6.")]
+    [Header("Zona muerta")]
+    [Tooltip("Ancho (X, en unidades) de la banda donde el jugador se mueve SIN " +
+             "que la cámara se mueva. 0 = la cámara va siempre centrada en X. " +
+             "Valores típicos: 2–5.")]
+    public float deadZoneWidth = 3f;
+
+    [Tooltip("Alto (Y, en unidades) de la banda vertical. La cámara solo se " +
+             "desplaza cuando el jugador sale de la banda (ej. baja a otra " +
+             "plataforma). 0 = pegado al jugador. Valores típicos: 3–6.")]
     public float deadZoneHeight = 4f;
 
-    [Header("Límites verticales")]
-    [Tooltip("Si está activo, la cámara no baja de 'minY' ni sube de 'maxY'. " +
-             "Útil si hay un vacío abajo que no quieres mostrar. " +
-             "Déjalo apagado para que baje libremente a plataformas inferiores.")]
-    public bool useVerticalLimits = false;
-
-    [Tooltip("Altura mínima de la cámara.")]
-    public float minY = 0f;
-
-    [Tooltip("Altura máxima de la cámara.")]
-    public float maxY = 100f;
+    [Header("Límites del nivel (confiner)")]
+    [Tooltip("BoxCollider2D que define los bordes del nivel. La cámara nunca " +
+             "mostrará nada fuera de esta caja. Déjalo vacío para no usar límites. " +
+             "Marca 'Is Trigger' en ese collider para que no bloquee al jugador.")]
+    public BoxCollider2D bounds;
 
     [Header("Suavizado")]
-    [Tooltip("Suavizado del eje Y al cambiar de altura. 0 = instantáneo. " +
-             "Valores típicos 0.1–0.2. El eje X siempre es instantáneo.")]
+    [Tooltip("Suavizado del movimiento de la cámara. 0 = instantáneo. " +
+             "Valores típicos 0.05–0.15.")]
     public float smoothTime = 0.08f;
 
-    private float focusY;     // centro vertical de la zona muerta (en mundo)
-    private float yVelocity;
+    private Camera  cam;
+    private Vector2 focus;      // centro de la zona muerta (en mundo)
+    private Vector2 velocity;
 
     void Start()
     {
-        focusY = player != null ? player.position.y : fixedY;
+        cam   = GetComponent<Camera>();
+        focus = player != null
+            ? (Vector2)player.position
+            : new Vector2(transform.position.x, fixedY);
     }
 
     void LateUpdate()
     {
         if (player == null) return;
+        if (cam == null) cam = GetComponent<Camera>();
 
-        float targetX = player.position.x + offset.x;
+        Vector2 p = player.position;
 
-        // ── Altura objetivo con zona muerta ──────────────────────────────────
-        float desiredY;
+        // ── Zona muerta horizontal ───────────────────────────────────────────
+        float halfW = Mathf.Max(0f, deadZoneWidth * 0.5f);
+        if      (p.x > focus.x + halfW) focus.x = p.x - halfW;
+        else if (p.x < focus.x - halfW) focus.x = p.x + halfW;
+
+        // ── Zona muerta vertical ─────────────────────────────────────────────
         if (followVertical)
         {
-            float playerY = player.position.y;
-            float half    = Mathf.Max(0f, deadZoneHeight * 0.5f);
-
-            // El "foco" solo se mueve cuando el jugador sale de la banda.
-            // Dentro de la banda la cámara permanece quieta en Y.
-            if      (playerY > focusY + half) focusY = playerY - half;
-            else if (playerY < focusY - half) focusY = playerY + half;
-
-            desiredY = focusY + offset.y;
-
-            if (useVerticalLimits)
-                desiredY = Mathf.Clamp(desiredY, minY, maxY);
+            float halfH = Mathf.Max(0f, deadZoneHeight * 0.5f);
+            if      (p.y > focus.y + halfH) focus.y = p.y - halfH;
+            else if (p.y < focus.y - halfH) focus.y = p.y + halfH;
         }
-        else
+
+        float desiredX = focus.x + offset.x;
+        float desiredY = followVertical ? focus.y + offset.y : fixedY;
+
+        // ── Confiner: mantener la vista dentro de los límites del nivel ───────
+        if (bounds != null && cam != null && cam.orthographic)
         {
-            desiredY = fixedY;
+            Bounds b    = bounds.bounds;
+            float  vExt = cam.orthographicSize;        // media altura visible
+            float  hExt = vExt * cam.aspect;           // media anchura visible
+
+            float minX = b.min.x + hExt, maxX = b.max.x - hExt;
+            float minY = b.min.y + vExt, maxY = b.max.y - vExt;
+
+            // Si el nivel es más chico que la vista, centrar en ese eje
+            desiredX = minX <= maxX ? Mathf.Clamp(desiredX, minX, maxX) : b.center.x;
+            desiredY = minY <= maxY ? Mathf.Clamp(desiredY, minY, maxY) : b.center.y;
         }
 
-        // ── Aplicar: X instantáneo, Y suavizado ──────────────────────────────
-        float newY = smoothTime > 0f
-            ? Mathf.SmoothDamp(transform.position.y, desiredY, ref yVelocity, smoothTime)
-            : desiredY;
+        // ── Aplicar con suavizado ────────────────────────────────────────────
+        Vector2 target  = new Vector2(desiredX, desiredY);
+        Vector2 current = transform.position;
+        Vector2 next = smoothTime > 0f
+            ? Vector2.SmoothDamp(current, target, ref velocity, smoothTime)
+            : target;
 
-        transform.position = new Vector3(targetX, newY, -10f);
+        transform.position = new Vector3(next.x, next.y, -10f);
     }
 
-    // ── Visualizar la zona muerta en el editor ───────────────────────────────
+    // ── Gizmos: zona muerta (amarillo) y límites del nivel (verde) ────────────
     void OnDrawGizmosSelected()
     {
-        if (!followVertical || deadZoneHeight <= 0f) return;
+        Vector3 c = transform.position;
 
-        Camera cam = GetComponent<Camera>();
-        float width = cam != null && cam.orthographic ? cam.orthographicSize * 2f * cam.aspect : 20f;
+        Gizmos.color = new Color(1f, 0.9f, 0.2f, 0.7f);
+        Gizmos.DrawWireCube(
+            new Vector3(c.x, c.y, 0f),
+            new Vector3(Mathf.Max(deadZoneWidth, 0.05f),
+                        followVertical ? Mathf.Max(deadZoneHeight, 0.05f) : 0.05f, 0f));
 
-        float centerY = Application.isPlaying ? focusY + offset.y : transform.position.y;
-        Gizmos.color = new Color(1f, 0.9f, 0.2f, 0.6f);
-        Vector3 c = new Vector3(transform.position.x, centerY, 0f);
-        Gizmos.DrawWireCube(c, new Vector3(width, deadZoneHeight, 0f));
+        if (bounds != null)
+        {
+            Gizmos.color = new Color(0.3f, 1f, 0.45f, 0.7f);
+            Gizmos.DrawWireCube(bounds.bounds.center, bounds.bounds.size);
+        }
     }
 }
