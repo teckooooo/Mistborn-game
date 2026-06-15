@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16a0b1f5ec2661548b8c8d204cb9bb97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHealth: 30
+  maxHealth: 90
   deathDelay: 1
   currentHealth: 0
   OnDeath:

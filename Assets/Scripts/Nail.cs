@@ -122,7 +122,7 @@ public class Nail : MonoBehaviour
                 foreach (Collider2D hit in hits)
                 {
                     EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
-                    if (enemy != null)
+                    if (enemy != null && !enemy.projectileImmune)
                     {
                         enemy.TakeDamage(impactDamage);
                         Debug.Log($"[Nail] Impactó a {hit.name} por {impactDamage:F1} (vel: {speed:F1})");

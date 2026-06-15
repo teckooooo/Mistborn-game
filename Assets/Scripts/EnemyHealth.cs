@@ -6,11 +6,17 @@ public class EnemyHealth : MonoBehaviour
     [Header("Salud")]
     public float maxHealth  = 30f;
 
+    [Header("Invencibilidad tras recibir daño")]
+    [Tooltip("Segundos de invulnerabilidad tras un golpe. Limita el daño por 'spam' " +
+             "(ej. monedas). 0 = sin límite. Para jefes prueba 0.2–0.3.")]
+    public float damageCooldown = 0f;
+
     [Header("Muerte")]
     public float deathDelay = 1f;
 
     [Header("Estado (solo lectura)")]
     [SerializeField] private float currentHealth;
+    [SerializeField] private float damageTimer;
 
     private HitFlash  hitFlash;
     private Knockback knockback;
@@ -20,6 +26,10 @@ public class EnemyHealth : MonoBehaviour
 
     public bool  IsDead         => currentHealth <= 0f;
     public float HealthFraction => currentHealth / maxHealth;
+
+    /// <summary>Si está activo, los proyectiles (monedas/clavos) no le hacen daño.
+    /// Lo controla el jefe durante el cast para deflectar el metal.</summary>
+    [System.NonSerialized] public bool projectileImmune = false;
 
     void Awake()
     {
@@ -31,9 +41,18 @@ public class EnemyHealth : MonoBehaviour
     /// <summary>
     /// Recibir daño. attacker = quien golpea (para dirección del knockback).
     /// </summary>
+    void Update()
+    {
+        if (damageTimer > 0f) damageTimer -= Time.deltaTime;
+    }
+
     public void TakeDamage(float amount, Transform attacker = null)
     {
         if (IsDead) return;
+
+        // Invencibilidad breve: ignora golpes mientras el timer corra.
+        if (damageCooldown > 0f && damageTimer > 0f) return;
+        damageTimer = damageCooldown;
 
         currentHealth = Mathf.Max(currentHealth - amount, 0);
         Debug.Log($"[EnemyHealth] {gameObject.name} recibió {amount:F1} | HP: {currentHealth:F1}/{maxHealth}");
