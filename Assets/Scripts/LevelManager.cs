@@ -54,6 +54,29 @@ public static class LevelManager
     public static void LoadMainMenu()    => SceneManager.LoadScene(0);
     public static void LoadLevelSelect() => SceneManager.LoadScene(1);
 
+    /// <summary>
+    /// Carga el siguiente nivel al actual. Si no existe (no hay escena 'Nivel'
+    /// siguiente en Build Settings), vuelve al selector de niveles.
+    /// </summary>
+    public static void LoadNextLevel(int currentLevel)
+    {
+        int next       = currentLevel + 1;
+        int sceneIndex = next + LevelOffset - 1;
+
+        if (next <= TotalLevels && sceneIndex < SceneManager.sceneCountInBuildSettings)
+        {
+            string path = SceneUtility.GetScenePathByBuildIndex(sceneIndex);
+            if (path.Contains("Nivel"))
+            {
+                LoadLevel(next);
+                return;
+            }
+        }
+
+        Debug.Log("[LevelManager] No hay siguiente nivel — volviendo al selector.");
+        LoadLevelSelect();
+    }
+
     /// <summary>Borrar todo el progreso (útil para debug).</summary>
     public static void ResetProgress()
     {

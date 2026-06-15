@@ -7616,6 +7616,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.09
   targetCamera: {fileID: 0}
 --- !u!212 &356407294
 SpriteRenderer:
@@ -8139,6 +8140,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 0
   tileCount: 1
+  constantScrollSpeed: 0
   targetCamera: {fileID: 0}
 --- !u!212 &382464297
 SpriteRenderer:
@@ -15710,6 +15712,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.45
   targetCamera: {fileID: 0}
 --- !u!212 &758261052
 SpriteRenderer:
@@ -16269,6 +16272,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.6
   targetCamera: {fileID: 0}
 --- !u!212 &793556672
 SpriteRenderer:
@@ -16927,6 +16931,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.09
   targetCamera: {fileID: 0}
 --- !u!212 &820536802
 SpriteRenderer:
@@ -26967,6 +26972,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.09
   targetCamera: {fileID: 0}
 --- !u!212 &1530471334
 SpriteRenderer:
@@ -28368,6 +28374,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.45
   targetCamera: {fileID: 0}
 --- !u!212 &1623766913
 SpriteRenderer:
@@ -30359,6 +30366,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.45
   targetCamera: {fileID: 0}
 --- !u!212 &1728153471
 SpriteRenderer:
@@ -33539,6 +33547,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.6
   targetCamera: {fileID: 0}
 --- !u!212 &1867713462
 SpriteRenderer:
@@ -34152,6 +34161,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.6
   targetCamera: {fileID: 0}
 --- !u!212 &1893655043
 SpriteRenderer:
