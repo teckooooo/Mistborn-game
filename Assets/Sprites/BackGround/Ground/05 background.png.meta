@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 020a00ed21e42e444b8fde74cb9ecdb4
+guid: 565f61c751c4a7045877624792b81aba
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4552838390712430263
-    second: brush_0
+      213: -5542515717519321092
+    second: 05 background_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,9 +40,9 @@ TextureImporter:
     filterMode: 0
     aniso: 1
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
-    wrapW: 1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,45 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: brush_0
+      name: 05 background_0
       rect:
         serializedVersion: 2
-        x: 6
-        y: 95
-        width: 213
-        height: 97
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7beec26f46eee2f30800000000000000
-      internalID: 4552838390712430263
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: brush_1
-      rect:
-        serializedVersion: 2
-        x: 1
+        x: 0
         y: 0
-        width: 217
-        height: 95
+        width: 426
+        height: 99
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: aaa4729fd06b3874583efac06549353f
-      internalID: 107857400
+      spriteID: cf7dd3702570513b0800000000000000
+      internalID: -5542515717519321092
       vertices: []
       indices: 
       edges: []
@@ -147,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 307744cf40bc8a24d83a10ea1397c6dc
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -157,8 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      brush_0: 4552838390712430263
-      brush_1: 107857400
+      05 background_0: -5542515717519321092
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
