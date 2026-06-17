@@ -76,7 +76,7 @@ public class Coin : MonoBehaviour
                 foreach (Collider2D hit in enemyHits)
                 {
                     EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
-                    if (enemy != null)
+                    if (enemy != null && !enemy.projectileImmune)
                     {
                         enemy.TakeDamage(impactDamage);
                         Destroy(gameObject);
@@ -133,17 +133,20 @@ public class Coin : MonoBehaviour
                 Collider2D[] hits = Physics2D.OverlapCircleAll(
                     transform.position, 0.4f, enemyMask);
 
+                bool damaged = false;
                 foreach (Collider2D hit in hits)
                 {
                     EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
-                    if (enemy != null)
+                    if (enemy != null && !enemy.projectileImmune)
                     {
                         enemy.TakeDamage(impactDamage);
                         Debug.Log($"[Coin] Impactó a {hit.name} por {impactDamage:F1} (vel: {speed:F1})");
+                        damaged = true;
                     }
                 }
 
-                if (hits.Length > 0)
+                // Si solo tocó a un enemigo inmune (jefe casteando), la moneda no se gasta.
+                if (damaged)
                 {
                     Destroy(gameObject);
                     return;

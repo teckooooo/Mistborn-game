@@ -6230,6 +6230,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.09
   targetCamera: {fileID: 0}
 --- !u!212 &356407294
 SpriteRenderer:
@@ -6476,6 +6477,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 0
   tileCount: 1
+  constantScrollSpeed: 0
   targetCamera: {fileID: 0}
 --- !u!212 &382464297
 SpriteRenderer:
@@ -9260,11 +9262,75 @@ MonoBehaviour:
   followVertical: 1
   offset: {x: 0, y: 0}
   fixedY: 0
+  deadZoneWidth: 3
   deadZoneHeight: 4
-  useVerticalLimits: 0
-  minY: 0
-  maxY: 100
+  fallLookAhead: 1
+  lookAheadAmount: 3
+  lookAheadFallSpeed: 2
+  lookAheadSmooth: 0.25
+  bounds: {fileID: 1561701146}
   smoothTime: 0.08
+--- !u!1001 &526567172
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 245.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1837928748360872684, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5495879910693274271, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: levelNumber
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422367723833462236, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
+      propertyPath: m_Name
+      value: 'Meta '
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e5925ab2924c93b4cb954c37f69f6ce3, type: 3}
 --- !u!1 &533217613
 GameObject:
   m_ObjectHideFlags: 0
@@ -12572,6 +12638,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.45
   targetCamera: {fileID: 0}
 --- !u!212 &758261052
 SpriteRenderer:
@@ -13792,6 +13859,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.6
   targetCamera: {fileID: 0}
 --- !u!212 &793556672
 SpriteRenderer:
@@ -14249,6 +14317,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.09
   targetCamera: {fileID: 0}
 --- !u!212 &820536802
 SpriteRenderer:
@@ -23006,6 +23075,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.09
   targetCamera: {fileID: 0}
 --- !u!212 &1530471334
 SpriteRenderer:
@@ -23204,6 +23274,98 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1561701144
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1561701147}
+  - component: {fileID: 1561701146}
+  - component: {fileID: 1561701145}
+  m_Layer: 0
+  m_Name: ZonaSuperior
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1561701145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561701144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a3bbef0d5832a4f8036e2bad15aba8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraZone
+  playerTag: Player
+--- !u!61 &1561701146
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561701144}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -17.7089, y: -0.48393822}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 260.20154, y: 10.143036}
+  m_EdgeRadius: 0
+--- !u!4 &1561701147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561701144}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 135.7953, y: 0.52, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1579828502
 GameObject:
   m_ObjectHideFlags: 0
@@ -23520,6 +23682,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.45
   targetCamera: {fileID: 0}
 --- !u!212 &1623766913
 SpriteRenderer:
@@ -24561,6 +24724,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.45
   targetCamera: {fileID: 0}
 --- !u!212 &1728153471
 SpriteRenderer:
@@ -27118,6 +27282,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.6
   targetCamera: {fileID: 0}
 --- !u!212 &1867713462
 SpriteRenderer:
@@ -27593,6 +27758,7 @@ MonoBehaviour:
   verticalParallax: 1
   infiniteHorizontal: 1
   tileCount: 3
+  constantScrollSpeed: 0.6
   targetCamera: {fileID: 0}
 --- !u!212 &1893655043
 SpriteRenderer:
@@ -31407,3 +31573,5 @@ SceneRoots:
   - {fileID: 1624771232}
   - {fileID: 2041167895}
   - {fileID: 1958799918}
+  - {fileID: 1561701147}
+  - {fileID: 526567172}
