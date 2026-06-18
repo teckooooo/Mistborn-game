@@ -4714,6 +4714,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6215777457410959565, guid: dfc6b4000d13c154ab0066c764c3e732, type: 3}
+      propertyPath: inventory
+      value: 
+      objectReference: {fileID: 866237567}
     - target: {fileID: 6847638320729012458, guid: dfc6b4000d13c154ab0066c764c3e732, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -4742,6 +4746,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8467345756172155578, guid: dfc6b4000d13c154ab0066c764c3e732, type: 3}
+      propertyPath: inventory
+      value: 
+      objectReference: {fileID: 866237567}
+    - target: {fileID: 8525896298148229307, guid: dfc6b4000d13c154ab0066c764c3e732, type: 3}
+      propertyPath: playerHealth
+      value: 
+      objectReference: {fileID: 866237571}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -11219,7 +11231,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &541822348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19178,6 +19190,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 866227110}
   m_CullTransparentMesh: 1
+--- !u!114 &866237567 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6023836679268908734, guid: c62dd61a0f108f34885402eff47177f2, type: 3}
+  m_PrefabInstance: {fileID: 5704004355159413970}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5dbb169e1cdf3f4db7d7bdcd51ffa9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+--- !u!114 &866237571 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5471436103430051786, guid: c62dd61a0f108f34885402eff47177f2, type: 3}
+  m_PrefabInstance: {fileID: 5704004355159413970}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a819cee6f275e414f8b7959006c18b96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &867010009
 GameObject:
   m_ObjectHideFlags: 0
@@ -20129,7 +20163,12 @@ MonoBehaviour:
   mode: 1
   startKey: 102
   promptObject: {fileID: 1875385220}
-  lines: []
+  lines:
+  - "Despierta. El mundo que conociste ardi\xF3 hasta la ceniza."
+  - "Soy <color=#9ad8ff>Armon\xEDa</color>. Mi voz te guiar\xE1 donde otros callan."
+  - "Llevas metal en la sangre: <i>Hierro</i> y <i>Acero</i>. Apr\xE9ndelos."
+  - Con el Acero empujas; con el Hierro atraes. El metal es tu ancla y tu arma.
+  - "Lev\xE1ntate, Nacido de la Bruma. A\xFAn queda esperanza... incluso aqu\xED."
   once: 1
   delay: 0
   playerTag: Player
@@ -33169,10 +33208,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1997504157}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1545423196
 CanvasRenderer:
@@ -33202,7 +33241,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: heeeeeey
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -33229,15 +33268,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -42682,8 +42721,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0024414062, y: 344.22296}
-  m_SizeDelta: {x: 0.0051, y: -1459.3202}
+  m_AnchoredPosition: {x: 0, y: 380}
+  m_SizeDelta: {x: -60, y: -880}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1997504158
 MonoBehaviour:
