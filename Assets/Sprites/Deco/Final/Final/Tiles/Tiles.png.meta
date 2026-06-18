@@ -613,7 +613,7 @@ TextureImporter:
         width: 63
         height: 26
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -622,6 +622,94 @@ TextureImporter:
       bones: []
       spriteID: 8f254538ad3e98443a8695bec9ff3076
       internalID: 1554163385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tiles_23
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 73
+        width: 20
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc7abdb824c63874f8fbb466f9853149
+      internalID: 1662075505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tiles_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 121
+        width: 62
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dffe18cba682ab74490240d9d25277e0
+      internalID: -992965622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tiles_25
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 55
+        width: 34
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c137ddd9923845040a6960840355be2f
+      internalID: -882976099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tiles_26
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 119
+        width: 64
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7343915cb9fd0dd4b8e5d1596fa7e467
+      internalID: -444283607
       vertices: []
       indices: 
       edges: []
@@ -656,6 +744,10 @@ TextureImporter:
       Tiles_20: -1557972217
       Tiles_21: -1292719639
       Tiles_22: 1554163385
+      Tiles_23: 1662075505
+      Tiles_24: -992965622
+      Tiles_25: -882976099
+      Tiles_26: -444283607
       Tiles_3: -5062486230716756072
       Tiles_4: 4099902767569298868
       Tiles_5: -6833445872158455971
