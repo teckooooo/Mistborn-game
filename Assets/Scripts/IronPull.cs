@@ -150,19 +150,13 @@ public class IronPull : MonoBehaviour
         }
         else
         {
-            // Click derecho solo: recall de TODOS los proyectiles propios en el radio
-            List<MetalObject> projectiles = GetAreaProjectiles();
-            if (projectiles.Count > 0)
-            {
-                RecallProjectiles(projectiles);
-            }
-            else
-            {
-                // Sin proyectiles propios → targeting normal (metales del entorno)
-                List<MetalObject> targets = targeting.GetPullTargets();
-                if (targets.Count == 0) { if (debugLog) Debug.LogWarning("[IronPull] Sin targets."); return; }
-                PullTargets(targets, strength);
-            }
+            // Click derecho: jalar SOLO lo que apuntas (1 objetivo).
+            // Fuente de metal apuntada → te elevas/acercas a ella.
+            // Moneda/clavo apuntado → lo llamas a ti.
+            // Lo que no apuntas NO se mueve (las monedas cercanas ya no interfieren).
+            List<MetalObject> targets = targeting.GetPullTargets();
+            if (targets.Count == 0) { if (debugLog) Debug.LogWarning("[IronPull] Sin targets."); return; }
+            PullTargets(targets, strength);
         }
     }
 

@@ -44,6 +44,6 @@ public class ProjectileUI : MonoBehaviour
         }
     }
 
-    void UpdateCoins(int count) { if (coinText != null) coinText.text = $"{count}"; }
-    void UpdateNails(int count) { if (nailText != null) nailText.text = $"{count}"; }
+    void UpdateCoins(int count) { if (coinText != null) coinText.text = $"{count}/{inventory.maxCoins}"; }
+    void UpdateNails(int count) { if (nailText != null) nailText.text = $"{count}/{inventory.maxNails}"; }
 }
