@@ -17,9 +17,15 @@ public class Coin : MonoBehaviour
     [Header("Superficies de anclaje")]
     public string[] anchorTags = new string[] { "Ground" };
 
+    [Header("Orden de dibujo (sorting)")]
+    [Tooltip("Order in Layer mientras vuela o está suelta. Súbelo por encima del " +
+             "decorado del escenario para que la moneda siempre quede DELANTE.")]
+    public int flyingSortingOrder = 50;
+
     [Header("Embed Visual")]
     public float embedFraction = 0.4f;
-    [Tooltip("Sorting Order cuando está anclada (detrás de la superficie)")]
+    [Tooltip("Order in Layer cuando está anclada/incrustada. Para que se vea 'medio " +
+             "enterrada', ponlo por debajo del order de la superficie donde se clava.")]
     public int embeddedSortingOrder = -1;
 
     private bool           anchored    = false;
@@ -41,7 +47,7 @@ public class Coin : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
-        if (sr != null) originalSortingOrder = sr.sortingOrder;
+        if (sr != null) { originalSortingOrder = sr.sortingOrder; sr.sortingOrder = flyingSortingOrder; }
 
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
@@ -210,7 +216,7 @@ public class Coin : MonoBehaviour
         anchored    = false;
         unanchoring = true;
 
-        if (sr != null) sr.sortingOrder = originalSortingOrder;
+        if (sr != null) sr.sortingOrder = flyingSortingOrder;
 
         MetalObject metal = GetComponent<MetalObject>();
         if (metal != null) metal.anchoredMass = 0f;

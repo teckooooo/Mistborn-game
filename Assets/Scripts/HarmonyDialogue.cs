@@ -34,6 +34,10 @@ public class HarmonyDialogue : MonoBehaviour
     public TextMeshProUGUI speakerLabel;
     public string speakerName = "Armonía";
 
+    [Tooltip("Opcional: aviso tipo 'Presiona F ▼'. Aparece cuando la línea " +
+             "termina de escribirse y se puede avanzar (solo en avance manual).")]
+    public GameObject continueIndicator;
+
     [Header("Máquina de escribir")]
     [Tooltip("Caracteres por segundo. Más bajo = más solemne.")]
     public float charsPerSecond = 28f;
@@ -66,6 +70,7 @@ public class HarmonyDialogue : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         if (panel != null) panel.SetActive(false);
+        SetIndicator(false);
     }
 
     void Update()
@@ -114,6 +119,7 @@ public class HarmonyDialogue : MonoBehaviour
     IEnumerator TypeLine(string line)
     {
         isTyping = true;
+        SetIndicator(false);   // ocultar mientras se escribe
 
         // Usar maxVisibleCharacters preserva el rich text (cursiva/color).
         text.text = line;
@@ -136,6 +142,10 @@ public class HarmonyDialogue : MonoBehaviour
             yield return new WaitForSecondsRealtime(autoAdvanceDelay);
             ShowNext();
         }
+        else
+        {
+            SetIndicator(true);   // línea lista → mostrar "Presiona F"
+        }
     }
 
     void OnAdvance()
@@ -146,16 +156,24 @@ public class HarmonyDialogue : MonoBehaviour
             if (typeRoutine != null) StopCoroutine(typeRoutine);
             text.maxVisibleCharacters = text.textInfo.characterCount;
             isTyping = false;
+            SetIndicator(true);   // ya completa → mostrar "Presiona F"
         }
         else
         {
+            SetIndicator(false);
             ShowNext();
         }
+    }
+
+    void SetIndicator(bool on)
+    {
+        if (continueIndicator != null) continueIndicator.SetActive(on);
     }
 
     void EndDialogue()
     {
         active = false;
+        SetIndicator(false);
         if (panel != null) panel.SetActive(false);
         if (pauseGameWhileTalking) Time.timeScale = 1f;
     }

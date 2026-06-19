@@ -81,8 +81,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1143537445
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -4052765380836289656, guid: e1373fc08ccbea74aa4b9bdf3dbeb242, type: 3}
@@ -185,4 +185,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Nail
   beingPulled: 0
+  duraluminPulled: 0
   duraluMinThreshold: 3
+  collectRadius: 1
+  impactDamage: 30
+  minSpeedForDamage: 3
+  impactRadius: 0.4
+  anchorTags:
+  - Ground
+  - Muro
+  - Piso
+  - Pasto
+  - Cristal
+  flyingSortingOrder: 50
+  embedFraction: 0.45
+  embeddedSortingOrder: -1

@@ -20,9 +20,15 @@ public class Nail : MonoBehaviour
     [Header("Superficies de incrustación")]
     public string[] anchorTags = new string[] { "Ground", "Muro", "Piso", "Pasto", "Cristal" };
 
+    [Header("Orden de dibujo (sorting)")]
+    [Tooltip("Order in Layer mientras vuela o está suelto. Súbelo por encima del " +
+             "decorado del escenario para que el clavo siempre quede DELANTE.")]
+    public int flyingSortingOrder = 50;
+
     [Header("Embed Visual")]
     public float embedFraction = 0.45f;
-    [Tooltip("Sorting Order cuando está incrustado (detrás de la superficie)")]
+    [Tooltip("Order in Layer cuando está incrustado. Para que se vea 'medio enterrado', " +
+             "ponlo por debajo del order de la superficie donde se clava.")]
     public int embeddedSortingOrder = -1;
 
     public bool Embedded => embedded;
@@ -46,7 +52,7 @@ public class Nail : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
-        if (sr != null) originalSortingOrder = sr.sortingOrder;
+        if (sr != null) { originalSortingOrder = sr.sortingOrder; sr.sortingOrder = flyingSortingOrder; }
 
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
@@ -200,7 +206,7 @@ public class Nail : MonoBehaviour
     {
         if (sr != null)
         {
-            sr.sortingOrder = originalSortingOrder;
+            sr.sortingOrder = flyingSortingOrder;
             sr.enabled = true;
         }
     }

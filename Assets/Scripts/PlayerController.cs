@@ -18,7 +18,14 @@ public class PlayerController : MonoBehaviour
     public Transform  coinSpawn;
     public float      coinThrowForce = 20f;
 
+    [Header("Ground Check")]
+    [Tooltip("Radio del círculo bajo los pies para detectar suelo. Súbelo si a veces no salta.")]
+    public float groundCheckRadius = 0.18f;
+    [Tooltip("Cuánto baja el punto de chequeo respecto al borde inferior del collider.")]
+    public float groundCheckOffset = 0.02f;
+
     private Rigidbody2D     rb;
+    private Collider2D      col;
     private MetalReserve    reserve;
     private PlayerInventory inventory;
     private SpriteRenderer  sr;
@@ -37,6 +44,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb        = GetComponent<Rigidbody2D>();
+        col       = GetComponent<Collider2D>();
         sr        = GetComponent<SpriteRenderer>();
         reserve   = GetComponent<MetalReserve>();
         inventory = GetComponent<PlayerInventory>();
@@ -48,6 +56,7 @@ public class PlayerController : MonoBehaviour
     {
         if (PauseMenu.IsPaused) return;
 
+        UpdateGrounded();
         Dash();
         if (!isDashing) Move();
         Jump();
@@ -155,20 +164,47 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    // ── Detección de suelo ──────────────────────────────────────────────────
+    // Chequeo continuo bajo los pies: funciona aunque el terreno esté hecho de
+    // muchas piezas (a diferencia de OnCollisionEnter, que solo detecta el
+    // momento del choque y se rompe al caminar entre piezas).
+
+    void UpdateGrounded()
     {
-        string tag = collision.gameObject.tag;
-        bool validSurface = tag == "Ground" || tag == "Coin"  || tag == "Metal" ||
-                            tag == "Muro"   || tag == "Piso"  || tag == "Pasto" || tag == "Cristal";
-        if (!validSurface) return;
-        foreach (ContactPoint2D contact in collision.contacts)
+        if (col == null) { isGrounded = false; return; }
+
+        Bounds  b    = col.bounds;
+        Vector2 feet = new Vector2(b.center.x, b.min.y - groundCheckOffset);
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(feet, groundCheckRadius);
+        foreach (Collider2D hit in hits)
         {
-            if (contact.normal.y > 0.3f) { isGrounded = true; currentGround = collision.gameObject; break; }
+            if (hit.gameObject == gameObject || hit.isTrigger) continue;
+            if (IsGroundTag(hit.tag))
+            {
+                isGrounded    = true;
+                currentGround = hit.gameObject;
+                return;
+            }
         }
+
+        isGrounded    = false;
+        currentGround = null;
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    bool IsGroundTag(string tag)
     {
-        if (collision.gameObject == currentGround) { isGrounded = false; currentGround = null; }
+        return tag == "Ground" || tag == "Coin"  || tag == "Metal" ||
+               tag == "Muro"   || tag == "Piso"  || tag == "Pasto" || tag == "Cristal";
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Collider2D c = GetComponent<Collider2D>();
+        if (c == null) return;
+        Bounds  b    = c.bounds;
+        Vector2 feet = new Vector2(b.center.x, b.min.y - groundCheckOffset);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(feet, groundCheckRadius);
     }
 }
