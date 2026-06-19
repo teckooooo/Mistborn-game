@@ -44,7 +44,7 @@ Transform:
   m_GameObject: {fileID: 4665735396254194560}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.92, y: 7.01, z: 0}
+  m_LocalPosition: {x: -4.03, y: -3.21, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -227,6 +227,8 @@ MonoBehaviour:
   coinPrefab: {fileID: 6562062035694803408, guid: ede87799d5080b54fb12b643897c9361, type: 3}
   coinSpawn: {fileID: 6286619946525735946}
   coinThrowForce: 20
+  groundCheckRadius: 0.18
+  groundCheckOffset: 0.02
 --- !u!114 &6232601672365518782
 MonoBehaviour:
   m_ObjectHideFlags: 0
